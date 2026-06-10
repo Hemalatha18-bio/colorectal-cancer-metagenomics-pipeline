@@ -170,12 +170,19 @@ colorectal-cancer-metagenomics-pipeline/
 ├── README.md
 ├── data_description.md
 ├── requirements.txt
-├── notebooks/
-├── src/
-├── figures/
-├── results/
-├── reports/
 ├── data/
+│   └── example_abundance_table.csv
+├── notebooks/
+│   └── .gitkeep
+├── src/
+│   ├── metagenomics_ml_pipeline.py
+│   └── visualize_microbiome_results.py
+├── figures/
+│   └── workflow_description.md
+├── results/
+│   └── results_summary.md
+├── reports/
+│   └── project_report.md
 └── LICENSE
 ```
 
