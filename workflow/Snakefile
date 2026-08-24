@@ -1,0 +1,40 @@
+configfile: "workflow/config.yaml"
+
+rule all:
+    input:
+        config["metrics"],
+        config["stats"],
+        config["importance"],
+        f"{config['output_dir']}/microbiome_abundance.png",
+        f"{config['output_dir']}/model_auc_comparison.png",
+        f"{config['output_dir']}/microbial_feature_importance.png"
+
+rule analyze:
+    input:
+        config["input"]
+    output:
+        metrics=config["metrics"],
+        stats=config["stats"],
+        importance=config["importance"]
+    shell:
+        "python src/metagenomics_ml_pipeline.py "
+        "--input {input} "
+        "--metrics-output {output.metrics} "
+        "--stats-output {output.stats} "
+        "--importance-output {output.importance}"
+
+rule visualize:
+    input:
+        abundance=config["input"],
+        metrics=config["metrics"],
+        importance=config["importance"]
+    output:
+        abundance=f"{config['output_dir']}/microbiome_abundance.png",
+        auc=f"{config['output_dir']}/model_auc_comparison.png",
+        importance=f"{config['output_dir']}/microbial_feature_importance.png"
+    shell:
+        "python src/visualize_microbiome_results.py "
+        "--input {input.abundance} "
+        "--metrics {input.metrics} "
+        "--importance {input.importance} "
+        "--output-dir {config[output_dir]}"
