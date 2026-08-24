@@ -1,0 +1,5 @@
+input: data/example_abundance_table.csv
+metrics: results/model_metrics.json
+stats: results/kruskal_wallis_results.csv
+importance: results/random_forest_feature_importance.csv
+output_dir: figures

@@ -9,3 +9,5 @@ statsmodels
 jupyter
 notebook
 biopython
+pytest
+snakemake
