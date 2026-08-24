@@ -8,15 +8,19 @@ The **public repository is a reproducible demonstration of selected downstream w
 
 ## Public Repository Scope
 
-The public demo currently includes:
+The public demo includes:
 
 - microbial abundance-table loading and validation;
 - per-feature Kruskal-Wallis testing;
 - leakage-safe train/test splitting and model preprocessing;
 - Random Forest and SVM classification;
 - AUC, accuracy, and classification-report export to JSON;
-- Random Forest feature-importance export; and
-- example visualization/documentation assets.
+- Random Forest feature-importance export;
+- visualizations generated from the real analysis outputs;
+- pytest-based automated tests;
+- GitHub Actions continuous integration;
+- a generic SLURM submission example; and
+- a compact Snakemake workflow for analysis and visualization.
 
 The broader project context included FastQC, Cutadapt, Kraken2, large FASTQ processing, Linux/HPC execution, additional statistical analyses, and workflow optimization. Those broader components are documented here as project context but are not fully reproduced by the current public scripts.
 
@@ -37,13 +41,18 @@ See `data_description.md` for additional notes about the example dataset.
 - Taxonomic classification
 - Microbial abundance profiling
 
-### Programming and analysis
+### Programming and workflow
 
 - Python
 - pandas
 - SciPy
 - scikit-learn
+- matplotlib
+- pytest
+- GitHub Actions
+- Snakemake
 - Linux/HPC
+- SLURM
 - Git/GitHub
 
 ### Machine learning and statistics
@@ -58,6 +67,7 @@ See `data_description.md` for additional notes about the example dataset.
 
 ```text
 colorectal-cancer-metagenomics-pipeline/
+├── .github/workflows/ci.yml
 ├── README.md
 ├── data_description.md
 ├── requirements.txt
@@ -66,6 +76,13 @@ colorectal-cancer-metagenomics-pipeline/
 ├── src/
 │   ├── metagenomics_ml_pipeline.py
 │   └── visualize_microbiome_results.py
+├── tests/
+│   └── test_metagenomics_pipeline.py
+├── hpc/
+│   └── run_metagenomics_demo.slurm
+├── workflow/
+│   ├── Snakefile
+│   └── config.yaml
 ├── figures/
 ├── results/
 ├── reports/
@@ -109,9 +126,47 @@ python src/metagenomics_ml_pipeline.py \
 
 The code performs the train/test split **before** fitting model preprocessing. Scaling is fitted only on the training partition through scikit-learn pipelines to reduce test-set leakage.
 
+### 5. Generate plots from the actual outputs
+
+```bash
+python src/visualize_microbiome_results.py \
+  --input data/example_abundance_table.csv \
+  --metrics results/model_metrics.json \
+  --importance results/random_forest_feature_importance.csv \
+  --output-dir figures
+```
+
+This produces abundance, model-AUC, and Random Forest feature-importance figures from the example input and generated result files rather than hard-coded performance values.
+
+### 6. Run tests
+
+```bash
+pytest -q
+```
+
+GitHub Actions runs this test suite automatically on pushes and pull requests targeting `main`.
+
+### 7. Run with Snakemake
+
+```bash
+snakemake --snakefile workflow/Snakefile --cores 1
+```
+
+The Snakemake workflow connects the example abundance table to model/statistical analysis and final visualization. Paths are defined in `workflow/config.yaml`.
+
+### 8. HPC / SLURM example
+
+A generic submission script is included at:
+
+```text
+hpc/run_metagenomics_demo.slurm
+```
+
+It is intentionally cluster-neutral. Module names, account/partition settings, environment activation, paths, and resource requests should be adapted to the target HPC system.
+
 ## Outputs
 
-The public demo writes:
+The analysis writes:
 
 ```text
 results/model_metrics.json
@@ -119,7 +174,7 @@ results/kruskal_wallis_results.csv
 results/random_forest_feature_importance.csv
 ```
 
-These outputs are generated from the included example dataset and should be treated as demonstration results.
+The visualization step writes figures under `figures/`. All generated outputs are based on the included example dataset and should be treated as demonstration results.
 
 ## Broader Project Context
 
@@ -146,19 +201,17 @@ The original work involved larger sequencing datasets and additional analyses. Q
 - The current statistical demo uses Kruskal-Wallis testing; other analyses from the broader project are not fully implemented here.
 - External validation and larger independent cohorts would be required before drawing scientific conclusions.
 
-## Planned Improvements
+## Possible Future Extensions
 
-- Make visualization scripts read directly from generated result files.
-- Add automated tests and GitHub Actions CI.
-- Add a generic SLURM example for HPC execution.
-- Add a compact Snakemake or Nextflow workflow for the public demo.
 - Add stronger missing-value and numeric-input validation.
-- Add cross-validation to the public ML demonstration.
+- Add cross-validation and hyperparameter tuning to the public ML demo.
 - Add safe example documentation for FASTQ preprocessing stages without distributing restricted data or environment-specific settings.
+- Add additional automated tests for plotting and workflow execution.
+- Add an external public validation dataset when an appropriate dataset and metadata schema are available.
 
 ## Skills Demonstrated
 
-This repository demonstrates microbiome data analysis, Python scientific programming, statistical testing, leakage-aware machine-learning workflows, model evaluation, feature-importance analysis, reproducibility practices, Git/GitHub organization, and familiarity with metagenomics/HPC workflow concepts.
+This repository demonstrates microbiome data analysis, Python scientific programming, statistical testing, leakage-aware machine-learning workflows, model evaluation, feature-importance analysis, automated testing, CI, workflow orchestration, reproducibility practices, Git/GitHub organization, and familiarity with metagenomics/HPC and SLURM concepts.
 
 ## Author
 
