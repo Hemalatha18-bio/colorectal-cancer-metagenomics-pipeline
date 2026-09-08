@@ -40,7 +40,7 @@ def test_feature_columns_exclude_metadata():
     assert get_feature_columns(data) == ["taxon_a", "taxon_b", "taxon_c"]
 
 
-def test_kruskal_wallis_returns_expected_columns():
+def test_kruskal_wallis_returns_fdr_corrected_columns():
     results = run_kruskal_wallis(make_demo_data())
     assert set(results.columns) == {
         "feature",
@@ -48,8 +48,18 @@ def test_kruskal_wallis_returns_expected_columns():
         "p_value",
         "mean_crc",
         "mean_control",
+        "q_value",
+        "significant_fdr_0_05",
     }
     assert len(results) == 3
+    assert results["p_value"].between(0.0, 1.0).all()
+    assert results["q_value"].between(0.0, 1.0).all()
+    assert results["significant_fdr_0_05"].dtype == bool
+
+
+def test_fdr_q_values_are_not_smaller_than_raw_p_values():
+    results = run_kruskal_wallis(make_demo_data())
+    assert (results["q_value"] >= results["p_value"] - 1e-12).all()
 
 
 def test_train_models_returns_valid_metrics():
