@@ -30,24 +30,53 @@ def plot_microbial_abundance(input_file, output_file, label_column="label", samp
     plt.close()
 
 
-def plot_model_metrics(metrics_file, output_file):
-    with open(metrics_file, "r", encoding="utf-8") as handle:
-        metrics = json.load(handle)
-
-    results = pd.DataFrame(
+def _metrics_dataframe(metrics):
+    return pd.DataFrame(
         {
             "Model": list(metrics.keys()),
             "AUC": [metrics[name]["auc"] for name in metrics],
             "Accuracy": [metrics[name]["accuracy"] for name in metrics],
+            "CV AUC": [metrics[name].get("cv_auc_mean") for name in metrics],
+            "CV AUC SD": [metrics[name].get("cv_auc_std") for name in metrics],
+            "CV Accuracy": [metrics[name].get("cv_accuracy_mean") for name in metrics],
+            "CV Accuracy SD": [metrics[name].get("cv_accuracy_std") for name in metrics],
         }
     )
 
+
+def plot_model_metrics(metrics_file, output_file):
+    with open(metrics_file, "r", encoding="utf-8") as handle:
+        metrics = json.load(handle)
+
+    results = _metrics_dataframe(metrics)
     output = Path(output_file)
     output.parent.mkdir(parents=True, exist_ok=True)
     ax = results.set_index("Model")[["AUC", "Accuracy"]].plot(kind="bar", figsize=(8, 5))
-    ax.set_ylim(0, 1)
+    ax.set_ylim(0, 1.05)
     ax.set_ylabel("Score")
-    ax.set_title("Model Performance on Example Data")
+    ax.set_title("Hold-out Model Performance on Example Data")
+    plt.xticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(output, dpi=300, bbox_inches="tight")
+    plt.close()
+
+
+def plot_cv_model_metrics(metrics_file, output_file):
+    with open(metrics_file, "r", encoding="utf-8") as handle:
+        metrics = json.load(handle)
+
+    results = _metrics_dataframe(metrics)
+    if results[["CV AUC", "CV Accuracy"]].isna().any().any():
+        raise ValueError("Metrics file is missing cross-validation values.")
+
+    output = Path(output_file)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    ax = results.set_index("Model")[["CV AUC", "CV Accuracy"]].plot(
+        kind="bar", figsize=(8, 5)
+    )
+    ax.set_ylim(0, 1.05)
+    ax.set_ylabel("Repeated CV Score")
+    ax.set_title("Repeated Stratified Cross-Validation (Example Data)")
     plt.xticks(rotation=0)
     plt.tight_layout()
     plt.savefig(output, dpi=300, bbox_inches="tight")
@@ -98,6 +127,7 @@ def main():
         args.sample_column,
     )
     plot_model_metrics(args.metrics, output_dir / "model_performance.png")
+    plot_cv_model_metrics(args.metrics, output_dir / "model_cv_performance.svg")
     plot_feature_importance(
         args.importance,
         output_dir / "microbial_feature_importance.png",
