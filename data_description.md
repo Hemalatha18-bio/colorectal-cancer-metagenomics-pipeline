@@ -1,122 +1,87 @@
 # Data Description
 
 ## Project
-
 Metagenomic Biomarker Discovery Pipeline for Colorectal Cancer
 
-## Overview
+## Public Demo Data
 
-This project uses stool metagenomic sequencing data to identify microbial features associated with colorectal cancer. The workflow begins with raw FASTQ sequencing files and continues through quality control, adapter trimming, taxonomic classification, microbial feature extraction, statistical testing, and machine learning model evaluation.
+The executable public demonstration in this repository starts from:
 
-## Data Types
+`data/example_abundance_table.csv`
 
-### 1. Raw FASTQ Sequencing Data
+This file is a small example microbial abundance table intended for software testing, workflow demonstration, and portfolio documentation. It is not raw patient sequencing data and should not be used to draw biological or clinical conclusions.
 
-FASTQ files represent raw metagenomic sequencing reads generated from stool samples.
+The public demo does **not** begin from FASTQ files. Raw sequencing QC, adapter trimming, taxonomic classification, and complete upstream feature-generation steps belong to the broader project context and are not fully reproduced by the current public scripts.
 
-Typical FASTQ inputs may include:
+## Expected Table Structure
 
-* Paired-end FASTQ files
-* Single-end FASTQ files
-* Sample-level metadata
-* Disease/control grouping information
+The example abundance table is organized with samples as rows and microbial features as columns. The analysis code expects:
 
-### 2. Sample Metadata
+- a binary group label column, by default `label`;
+- an optional sample identifier column, by default `SampleID`; and
+- numeric microbial feature columns used for statistical testing and machine-learning analysis.
 
-Metadata are required to connect each sequencing sample to its biological or clinical group.
+The public scripts load and validate this table, identify feature columns, perform per-feature statistics, and train demonstration classifiers.
 
-Example metadata fields:
+## What Is Not Included
 
-* Sample ID
-* Group label
-* Disease status
-* Sequencing batch
-* Read type
-* Notes on sample quality
+This repository does not include:
 
-### 3. Taxonomic Classification Outputs
+- raw stool FASTQ sequencing files;
+- protected health information or private patient records;
+- original project sample identifiers;
+- complete FastQC outputs;
+- original Cutadapt outputs;
+- Kraken2 databases or full taxonomic-classification outputs;
+- restricted or lab-owned datasets; or
+- a complete reproduction of the broader upstream preprocessing environment.
 
-Kraken2 outputs were used to classify sequencing reads into microbial taxa.
+## Broader Project Data Context
 
-Example output categories:
+The broader metagenomics project involved data types and workflow stages such as:
 
-* Taxon ID
-* Scientific name
-* Read count
-* Relative abundance
-* Sample ID
+- paired-end stool FASTQ sequencing data;
+- sample metadata and disease/control grouping;
+- sequencing QC outputs;
+- adapter- and quality-trimmed reads;
+- Kraken2 taxonomic-classification results;
+- microbial count or abundance tables; and
+- downstream statistical and machine-learning analysis tables.
 
-### 4. Microbial Abundance Tables
+Those data types describe broader project experience. They should not be inferred to be present in this public repository unless a corresponding file or executable workflow step is included here.
 
-Taxonomic classification outputs were converted into abundance tables for downstream statistics and machine learning.
+## Public Processing Workflow
 
-Example feature table structure:
+The reproducible public workflow is:
 
-* Rows: samples
-* Columns: microbial taxa or features
-* Values: read counts or normalized abundance values
-* Label column: disease/control group
+1. Load `data/example_abundance_table.csv`.
+2. Validate the label and feature columns.
+3. Run feature-wise Kruskal-Wallis testing.
+4. Split the example data for model training and evaluation.
+5. Train Random Forest and SVM demonstration pipelines.
+6. Export model metrics and Random Forest feature importance.
+7. Generate figures from the example input and generated outputs.
+8. Optionally orchestrate the workflow using Snakemake or submit the demonstration through the generic SLURM example.
 
-## Data Availability
+## Interpretation
 
-Raw FASTQ files are not included in this repository.
+Any statistics, feature rankings, AUC values, or accuracy values generated from the included example dataset are demonstration outputs. They are intended to show that the code and workflow execute reproducibly, not to establish colorectal-cancer biomarker validity or diagnostic performance.
 
-This repository is intended to demonstrate:
-
-* Workflow structure
-* Bioinformatics methodology
-* Code templates
-* Example analysis logic
-* Portfolio-level documentation
-
-Large sequencing datasets should be downloaded from their original public sources and cited appropriately.
-
-## Why Raw Data Is Not Included
-
-Raw sequencing files are not included because:
-
-* FASTQ files are large
-* Dataset usage terms vary
-* Some datasets may require controlled access
-* The repository is meant for workflow demonstration
-* Public repositories should avoid unnecessary large data storage
-
-## Example Data
-
-This repository may include small synthetic example files to demonstrate code functionality. These files are not real patient data and should only be used for testing scripts.
-
-## Processing Workflow
-
-The data workflow includes:
-
-1. Organize FASTQ files and metadata
-2. Run FastQC for sequencing quality control
-3. Trim adapters and low-quality reads using Cutadapt
-4. Classify reads using Kraken2
-5. Convert classification outputs into abundance tables
-6. Clean and normalize microbial feature tables
-7. Perform statistical biomarker testing
-8. Train machine learning classifiers
-9. Evaluate model performance
-10. Interpret candidate microbial biomarkers
-
-## Ethical and Privacy Considerations
-
-This repository does not include protected health information, private patient data, sample identifiers, or confidential clinical records.
+A research-grade microbiome analysis would require appropriate cohort design, metadata review, preprocessing and normalization choices, multiple-testing correction, confounder assessment, and independent validation.
 
 ## Reproducibility Notes
 
-To reproduce a similar workflow, users should:
+Users who want to extend the repository with public real-world data should:
 
-* Download public colorectal cancer microbiome datasets
-* Follow original dataset citation requirements
-* Use consistent metadata formatting
-* Run QC and preprocessing tools in a reproducible environment
-* Document software versions and database versions
+- obtain data from an appropriate public source and follow its citation and usage requirements;
+- document accession identifiers and metadata definitions;
+- record software and reference-database versions;
+- keep preprocessing and filtering choices explicit;
+- avoid committing restricted, unpublished, or patient-identifiable data; and
+- clearly distinguish generated research findings from example-data demonstrations.
 
 ## Author
 
-Hemalatha Ponnam
-M.S. Bioinformatics & Computational Biology
+Hemalatha Ponnam  
+M.S. Bioinformatics & Computational Biology  
 Saint Louis University
-Email: [hema22000latha@gmail.com](mailto:hema22000latha@gmail.com)
