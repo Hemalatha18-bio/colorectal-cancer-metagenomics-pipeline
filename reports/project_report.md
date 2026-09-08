@@ -21,9 +21,9 @@ The executable workflow uses `data/example_abundance_table.csv`, a small example
 
 ### Statistical Analysis
 
-The public pipeline performs per-feature Kruskal-Wallis testing between the demonstration groups and exports the resulting statistics. These results illustrate workflow behavior rather than validated biological significance.
+The public pipeline performs per-feature Kruskal-Wallis testing between the demonstration groups and applies Benjamini-Hochberg false-discovery-rate correction across the tested microbial features. The exported statistics include raw p-values, FDR-adjusted q-values, and a Boolean indicator for `FDR < 0.05`.
 
-For a full research analysis, multiple-testing correction, confounder assessment, microbiome-specific preprocessing, and independent validation would be important extensions.
+These results illustrate workflow behavior rather than validated biological significance. A full research analysis would still require appropriate cohort design, microbiome-specific preprocessing, confounder assessment, and independent validation.
 
 ### Machine Learning
 
@@ -68,9 +68,10 @@ These activities represent broader project experience and are not all implemente
 ### Public repository
 
 - Python
-- pandas / SciPy / scikit-learn
+- pandas / SciPy / statsmodels / scikit-learn
 - microbial abundance-table analysis
 - Kruskal-Wallis testing
+- Benjamini-Hochberg FDR correction
 - Random Forest and SVM modeling
 - feature-importance analysis
 - visualization
@@ -95,14 +96,13 @@ These activities represent broader project experience and are not all implemente
 
 - The public repository starts from an example abundance table rather than raw sequencing reads.
 - The included example data cannot establish biomarker validity or clinical performance.
-- The public statistical implementation is intentionally compact and does not represent a complete differential-abundance study.
+- FDR correction improves the feature-wise statistical demonstration but does not replace a complete differential-abundance analysis.
 - The current ML evaluation is a portfolio demonstration and lacks external validation.
 
 ## Future Improvements
 
 Useful extensions include:
 
-- Benjamini-Hochberg FDR correction for feature-wise tests;
 - stronger missing-value and numeric-input validation;
 - stratified cross-validation and nested model tuning;
 - microbiome-specific filtering and transformation options;
@@ -112,4 +112,4 @@ Useful extensions include:
 
 ## Conclusion
 
-This repository demonstrates a careful separation between reproducible public code and broader metagenomics project experience. The public artifact highlights microbiome data analysis, machine-learning workflow construction, reproducibility, testing, CI, and HPC-aware scientific computing without presenting example-data outputs as clinical or biological validation.
+This repository demonstrates a careful separation between reproducible public code and broader metagenomics project experience. The public artifact highlights microbiome data analysis, multiple-testing-aware statistical workflow design, machine-learning pipeline construction, reproducibility, testing, CI, and HPC-aware scientific computing without presenting example-data outputs as clinical or biological validation.
