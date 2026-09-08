@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -35,6 +36,24 @@ def test_load_abundance_table_rejects_empty_table(tmp_path):
         load_abundance_table(path)
 
 
+def test_load_abundance_table_rejects_missing_features(tmp_path):
+    path = tmp_path / "missing.csv"
+    data = make_demo_data()
+    data.loc[0, "taxon_a"] = np.nan
+    data.to_csv(path, index=False)
+    with pytest.raises(ValueError, match="missing values"):
+        load_abundance_table(path)
+
+
+def test_load_abundance_table_rejects_non_numeric_features(tmp_path):
+    path = tmp_path / "text.csv"
+    data = make_demo_data()
+    data["taxon_a"] = ["x"] * len(data)
+    data.to_csv(path, index=False)
+    with pytest.raises(ValueError, match="must be numeric"):
+        load_abundance_table(path)
+
+
 def test_feature_columns_exclude_metadata():
     data = make_demo_data()
     assert get_feature_columns(data) == ["taxon_a", "taxon_b", "taxon_c"]
@@ -62,12 +81,34 @@ def test_fdr_q_values_are_not_smaller_than_raw_p_values():
     assert (results["q_value"] >= results["p_value"] - 1e-12).all()
 
 
-def test_train_models_returns_valid_metrics():
-    results, fitted_models, feature_names = train_models(make_demo_data(), test_size=0.25)
+def test_train_models_rejects_non_binary_labels():
+    data = make_demo_data()
+    data.loc[0, "label"] = 2
+    with pytest.raises(ValueError, match="binary labels"):
+        train_models(data)
+
+
+def test_train_models_rejects_too_many_cv_splits():
+    with pytest.raises(ValueError, match="smallest class size"):
+        train_models(make_demo_data(), cv_splits=7)
+
+
+def test_train_models_returns_valid_holdout_and_cv_metrics():
+    results, fitted_models, feature_names = train_models(
+        make_demo_data(),
+        test_size=0.25,
+        cv_splits=3,
+        cv_repeats=2,
+    )
     assert set(results) == {"Random Forest", "SVM"}
     assert set(fitted_models) == {"Random Forest", "SVM"}
     assert feature_names == ["taxon_a", "taxon_b", "taxon_c"]
     for metrics in results.values():
         assert 0.0 <= metrics["auc"] <= 1.0
         assert 0.0 <= metrics["accuracy"] <= 1.0
+        assert 0.0 <= metrics["cv_auc_mean"] <= 1.0
+        assert metrics["cv_auc_std"] >= 0.0
+        assert 0.0 <= metrics["cv_accuracy_mean"] <= 1.0
+        assert metrics["cv_accuracy_std"] >= 0.0
+        assert metrics["cv_folds"] == 6
         assert "classification_report" in metrics
