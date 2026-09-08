@@ -15,6 +15,8 @@ The public analysis code:
 
 - loads and validates a microbial abundance table;
 - performs per-feature Kruskal-Wallis testing;
+- applies Benjamini-Hochberg false-discovery-rate correction across feature tests;
+- exports raw p-values, FDR-adjusted q-values, and an `FDR < 0.05` indicator;
 - creates leakage-aware train/test model pipelines;
 - trains Random Forest and Support Vector Machine classifiers;
 - exports AUC, accuracy, and classification-report metrics;
@@ -27,9 +29,9 @@ Generated files are written under `results/` and `figures/` when the public demo
 
 ## Statistical Interpretation
 
-The current public implementation uses Kruskal-Wallis tests as a compact demonstration of feature-wise group comparison. Results from the small example dataset are software-demonstration outputs and should not be interpreted as validated colorectal-cancer biomarkers.
+The public implementation uses Kruskal-Wallis tests as a compact demonstration of feature-wise group comparison and applies Benjamini-Hochberg correction to control the false discovery rate across the tested microbial features.
 
-For a research analysis involving many microbial features, additional considerations such as multiple-testing correction, prevalence/abundance filtering, compositional-data handling, confounder assessment, and independent validation would be appropriate.
+The resulting p-values and q-values from the small example dataset are software-demonstration outputs and should not be interpreted as validated colorectal-cancer biomarkers. A research analysis would still require appropriate cohort design, microbiome-specific preprocessing, confounder assessment, and independent validation.
 
 ## Machine-Learning Interpretation
 
@@ -47,9 +49,9 @@ Those activities provide project context but are not all reproduced by the publi
 
 - The public demo starts from an example abundance table rather than raw FASTQ files.
 - The example data are not intended to represent a clinical or population-scale cohort.
-- The current statistical demo does not establish biomarker significance.
+- FDR-adjusted example statistics do not establish biomarker validity.
 - The current model evaluation is a compact portfolio demonstration rather than an externally validated prediction study.
 
 ## Takeaway
 
-The repository is intended to demonstrate reproducible microbiome data analysis, Python scientific programming, statistical workflow design, machine-learning pipeline construction, automated testing, CI, Snakemake orchestration, and HPC-aware execution practices without overstating what can be concluded from the public example data.
+The repository is intended to demonstrate reproducible microbiome data analysis, Python scientific programming, multiple-testing-aware statistical workflow design, machine-learning pipeline construction, automated testing, CI, Snakemake orchestration, and HPC-aware execution practices without overstating what can be concluded from the public example data.
