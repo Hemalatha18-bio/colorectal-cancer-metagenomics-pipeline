@@ -12,6 +12,7 @@ The public demo includes:
 
 - microbial abundance-table loading and validation;
 - per-feature Kruskal-Wallis testing;
+- Benjamini-Hochberg false-discovery-rate correction across feature tests;
 - leakage-safe train/test splitting and model preprocessing;
 - Random Forest and SVM classification;
 - AUC, accuracy, and classification-report export to JSON;
@@ -46,6 +47,7 @@ See `data_description.md` for additional notes about the example dataset.
 - Python
 - pandas
 - SciPy
+- statsmodels
 - scikit-learn
 - matplotlib
 - pytest
@@ -60,6 +62,7 @@ See `data_description.md` for additional notes about the example dataset.
 - Random Forest
 - Support Vector Machine
 - Kruskal-Wallis testing
+- Benjamini-Hochberg FDR correction
 - AUC and accuracy evaluation
 - Feature-importance analysis
 
@@ -123,6 +126,8 @@ python src/metagenomics_ml_pipeline.py \
   --stats-output results/kruskal_wallis_results.csv \
   --importance-output results/random_forest_feature_importance.csv
 ```
+
+The statistical output contains raw p-values, Benjamini-Hochberg FDR-adjusted q-values, and an `FDR < 0.05` indicator for the tested microbial features.
 
 The code performs the train/test split **before** fitting model preprocessing. Scaling is fitted only on the training partition through scikit-learn pipelines to reduce test-set leakage.
 
@@ -198,20 +203,21 @@ The original work involved larger sequencing datasets and additional analyses. Q
 - The public repository starts from an example abundance table rather than raw FASTQ files.
 - It does not reproduce the complete FastQC/Cutadapt/Kraken2 workflow.
 - Example data cannot establish colorectal-cancer biomarker validity or clinical performance.
-- The current statistical demo uses Kruskal-Wallis testing; other analyses from the broader project are not fully implemented here.
+- FDR correction strengthens the feature-wise statistical demonstration but does not replace a complete differential-abundance analysis.
 - External validation and larger independent cohorts would be required before drawing scientific conclusions.
 
 ## Possible Future Extensions
 
 - Add stronger missing-value and numeric-input validation.
-- Add cross-validation and hyperparameter tuning to the public ML demo.
-- Add safe example documentation for FASTQ preprocessing stages without distributing restricted data or environment-specific settings.
+- Add stratified cross-validation and hyperparameter tuning to the public ML demo.
+- Add microbiome-specific filtering and transformation options.
 - Add additional automated tests for plotting and workflow execution.
 - Add an external public validation dataset when an appropriate dataset and metadata schema are available.
+- Commit generated example outputs and figures from the public demo directly to the repository.
 
 ## Skills Demonstrated
 
-This repository demonstrates microbiome data analysis, Python scientific programming, statistical testing, leakage-aware machine-learning workflows, model evaluation, feature-importance analysis, automated testing, CI, workflow orchestration, reproducibility practices, Git/GitHub organization, and familiarity with metagenomics/HPC and SLURM concepts.
+This repository demonstrates microbiome data analysis, Python scientific programming, multiple-testing-aware statistical analysis, leakage-aware machine-learning workflows, model evaluation, feature-importance analysis, automated testing, CI, workflow orchestration, reproducibility practices, Git/GitHub organization, and familiarity with metagenomics/HPC and SLURM concepts.
 
 ## Author
 
