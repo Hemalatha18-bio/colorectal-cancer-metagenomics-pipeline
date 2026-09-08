@@ -3,53 +3,53 @@
 ## Project
 Metagenomic Biomarker Discovery Pipeline for Colorectal Cancer
 
-## Summary
+## Public Demonstration Summary
 
-This project developed an end-to-end microbiome bioinformatics workflow for colorectal cancer biomarker discovery using stool metagenomic FASTQ data.
+This public repository provides a reproducible demonstration of downstream colorectal-cancer metagenomics analysis using a small example microbial abundance table. It is designed to demonstrate analysis structure, statistical testing, machine-learning workflow construction, visualization, testing, and reproducible execution practices.
 
-## Key Outcomes
+The public demo begins from `data/example_abundance_table.csv`. It does **not** reproduce raw FASTQ quality control, adapter trimming, Kraken2 classification, or the complete original preprocessing environment.
 
-- Processed 25+ GB of stool FASTQ sequencing data in the project setting.
-- Performed quality control using FastQC.
-- Removed adapters and low-quality sequences using Cutadapt.
-- Classified microbial reads using Kraken2.
-- Generated microbial abundance feature tables.
-- Applied statistical testing to identify candidate microbial biomarkers.
-- Trained Random Forest and SVM classifiers.
-- Achieved cross-validation AUC above 0.90 in the project setting.
-- Reduced QC-to-feature processing time by approximately 35% through parallelized preprocessing.
+## Reproducible Outputs
 
-## Example Statistical Analysis
+The public analysis code:
 
-The workflow used group comparison methods including:
+- loads and validates a microbial abundance table;
+- performs per-feature Kruskal-Wallis testing;
+- creates leakage-aware train/test model pipelines;
+- trains Random Forest and Support Vector Machine classifiers;
+- exports AUC, accuracy, and classification-report metrics;
+- exports Random Forest feature importance;
+- generates visualizations from the example input and generated outputs;
+- supports pytest-based automated testing and GitHub Actions CI; and
+- includes Snakemake and generic SLURM examples for reproducible workflow execution.
 
-- ANOVA
-- Kruskal-Wallis
-- Tukey HSD
+Generated files are written under `results/` and `figures/` when the public demo is run.
 
-These methods helped identify microbial taxa with differential abundance between colorectal cancer and control groups.
+## Statistical Interpretation
 
-## Example Machine Learning Models
+The current public implementation uses Kruskal-Wallis tests as a compact demonstration of feature-wise group comparison. Results from the small example dataset are software-demonstration outputs and should not be interpreted as validated colorectal-cancer biomarkers.
 
-| Model | Example AUC |
-|---|---:|
-| Random Forest | 0.92 |
-| SVM | 0.90 |
+For a research analysis involving many microbial features, additional considerations such as multiple-testing correction, prevalence/abundance filtering, compositional-data handling, confounder assessment, and independent validation would be appropriate.
 
-## Example Candidate Microbial Features
+## Machine-Learning Interpretation
 
-| Microbial Feature | Interpretation |
-|---|---|
-| Fusobacterium | Often discussed in colorectal cancer microbiome literature |
-| Bacteroides | Common gut microbiome genus with potential disease relevance |
-| Faecalibacterium | Often associated with gut health and inflammation-related studies |
-| Escherichia | Can be relevant in disease-associated gut microbiome shifts |
-| Prevotella | Common gut-associated genus with diet and disease-related associations |
+The public demo compares Random Forest and SVM classifiers using an example train/test split. Any AUC or accuracy values generated from the included example data demonstrate that the pipeline executes correctly; they are not estimates of clinical performance.
 
-## Interpretation
+No fixed performance values are presented here because the example dataset is intended for reproducibility and code demonstration rather than biological validation.
 
-The project demonstrates how metagenomic sequencing data can be transformed into microbial abundance features and analyzed using statistical and machine learning methods to identify potential biomarkers.
+## Broader Project Experience
 
-## Note
+The broader project context included work with stool metagenomic FASTQ data, sequencing QC, Cutadapt, Kraken2, microbial abundance-table generation, additional statistical analyses, Linux/HPC execution, and workflow optimization.
 
-This public repository includes simplified demo files and code templates. Raw sequencing data are not included.
+Those activities provide project context but are not all reproduced by the public scripts in this repository. Quantitative claims from the broader project are intentionally omitted unless the corresponding data, code, and benchmark procedure are available publicly.
+
+## Limitations
+
+- The public demo starts from an example abundance table rather than raw FASTQ files.
+- The example data are not intended to represent a clinical or population-scale cohort.
+- The current statistical demo does not establish biomarker significance.
+- The current model evaluation is a compact portfolio demonstration rather than an externally validated prediction study.
+
+## Takeaway
+
+The repository is intended to demonstrate reproducible microbiome data analysis, Python scientific programming, statistical workflow design, machine-learning pipeline construction, automated testing, CI, Snakemake orchestration, and HPC-aware execution practices without overstating what can be concluded from the public example data.
