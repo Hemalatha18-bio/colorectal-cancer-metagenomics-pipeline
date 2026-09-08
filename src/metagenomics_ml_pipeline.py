@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
+from statsmodels.stats.multitest import multipletests
 
 
 def load_abundance_table(file_path, label_column="label"):
@@ -37,7 +38,7 @@ def get_feature_columns(data, label_column="label", sample_column="SampleID"):
 
 
 def run_kruskal_wallis(data, label_column="label", sample_column="SampleID"):
-    """Run a two-group Kruskal-Wallis test for each microbial feature."""
+    """Run per-feature Kruskal-Wallis tests with Benjamini-Hochberg FDR correction."""
     features = get_feature_columns(data, label_column, sample_column)
     results = []
 
@@ -58,7 +59,17 @@ def run_kruskal_wallis(data, label_column="label", sample_column="SampleID"):
             }
         )
 
-    return pd.DataFrame(results).sort_values("p_value") if results else pd.DataFrame()
+    if not results:
+        return pd.DataFrame()
+
+    results_df = pd.DataFrame(results)
+    reject, q_values, _, _ = multipletests(
+        results_df["p_value"].to_numpy(), alpha=0.05, method="fdr_bh"
+    )
+    results_df["q_value"] = q_values.astype(float)
+    results_df["significant_fdr_0_05"] = reject.astype(bool)
+
+    return results_df.sort_values(["q_value", "p_value"]).reset_index(drop=True)
 
 
 def build_models():
@@ -173,7 +184,7 @@ def main():
     print("Loading microbial abundance table...")
     data = load_abundance_table(args.input, args.label_column)
 
-    print("Running Kruskal-Wallis feature tests...")
+    print("Running Kruskal-Wallis feature tests with Benjamini-Hochberg FDR correction...")
     stats_results = run_kruskal_wallis(
         data, args.label_column, args.sample_column
     )
