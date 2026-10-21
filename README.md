@@ -1,5 +1,49 @@
 # Metagenomic Biomarker Discovery Pipeline for Colorectal Cancer
 
+## At a glance
+
+| Category | Portfolio evidence |
+| --- | --- |
+| **Objective** | Demonstrate downstream microbial abundance analysis and reproducible classification workflows motivated by colorectal cancer research |
+| **Public input** | Small example abundance matrix in [`data/example_abundance_table.csv`](data/example_abundance_table.csv), **not a patient cohort** |
+| **Statistics** | Feature-wise Kruskal–Wallis tests and Benjamini–Hochberg FDR correction |
+| **Machine learning** | Random Forest and SVM with repeated stratified cross-validation and leakage-aware preprocessing |
+| **Engineering** | Input checks, exported machine-readable results, pytest, GitHub Actions, Snakemake, example SLURM script |
+| **Evidence boundary** | Results demonstrate **software behavior only**; they do not validate a clinical biomarker |
+
+**Jump to:** [Results](#reproducible-example-results) · [Reproduce](#how-to-run-the-public-demo) · [Data scope](#public-data-scope) · [Limitations](#limitations)
+
+### Executable demonstration workflow
+
+```text
+Example microbial abundance table
+            |
+       Input validation
+            |
+       +----+-------------------------+
+       |                              |
+Feature-wise Kruskal–Wallis    Stratified train/evaluation
+       |                              |
+Benjamini–Hochberg FDR         Leakage-aware preprocessing
+       |                              |
+Adjusted q-value report        Random Forest / SVM
+                                      |
+                              Repeated stratified CV
+                                      |
+                              Metrics + feature importance
+       +------------------------------+
+                       |
+            Figures + saved outputs
+                       |
+                Tests + CI
+```
+
+### Model comparison preview
+
+![Cross-validation model performance from example data](figures/model_cv_performance.svg)
+
+*These near-perfect scores come from a deliberately small, strongly separated example dataset. They are **not** an estimate of colorectal-cancer classification performance.*
+
 ## Overview
 
 This portfolio project documents a colorectal-cancer metagenomics workflow spanning raw sequencing QC, adapter trimming, taxonomic classification, microbial feature generation, statistical testing, and machine-learning analysis.
