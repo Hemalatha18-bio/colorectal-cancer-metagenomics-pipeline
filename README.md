@@ -1,5 +1,7 @@
 # Metagenomic Biomarker Discovery Pipeline for Colorectal Cancer
 
+[![CI](https://github.com/Hemalatha18-bio/colorectal-cancer-metagenomics-pipeline/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hemalatha18-bio/colorectal-cancer-metagenomics-pipeline/actions/workflows/ci.yml)
+
 ## At a glance
 
 | Category | Portfolio evidence |
